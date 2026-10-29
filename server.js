@@ -44,6 +44,7 @@ wss.on('connection', (ws) => {
     if (me.budget < 1) return; me.budget -= 1;
     if (buf.length > 4096) return;
     let m; try { m = JSON.parse(buf); } catch (e) { return; }
+    if (m && m.t === 'ping' && typeof m.c === 'number') { sendTo(ws, { t: 'pong', c: m.c, s: Date.now() }); return; }
     if (m && m.t === 'p' && m.d && typeof m.d === 'object' && !Array.isArray(m.d)) {
       me.presence = m.d;
       broadcast(id, { t: 'u', p: id, d: m.d });
